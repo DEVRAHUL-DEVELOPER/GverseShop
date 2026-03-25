@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { authDataContext } from "../context/authContext.jsx";
 import axios from "axios";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../utils/Firebase.js";
 
 function Registration() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +15,6 @@ function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ function Registration() {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    //Password match validation
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -38,17 +38,14 @@ function Registration() {
 
       console.log(result.data);
 
-      // Success
       alert("Registration successful");
-      navigate("/login");
 
     } catch (error) {
       console.log(error);
 
-      //Handle "user already exists"
       if (error.response) {
         if (error.response.status === 409) {
-          setError("User already exists ");
+          setError("User already exists");
         } else {
           setError(error.response.data?.message || "Something went wrong");
         }
@@ -58,116 +55,126 @@ function Registration() {
     }
   };
 
+  // ================= GOOGLE SIGNUP ================= //
+  const handleGoogleSignup = async () => {
+    try {
+      const response = await signInWithPopup(auth, provider);
+      const user = response.user;
+      const name = user.displayName;
+    const email = user.email;
+
+      const result = await axios.post(
+        `${serverUrl}/api/auth/googlelogin`,
+        {
+          name, email
+        },
+        { withCredentials: true }
+      );
+
+      console.log(result.data);
+
+      alert("Google signup successful");
+    } catch (error) {
+      console.error("Google signup error:", error);
+      setError("Failed to signup with Google");
+    }
+  };
+
   return (
-    <div className="w-screen min-h-screen bg-linear-to-br from-indigo-600 via-purple-600 to-blue-500 flex flex-col items-center">
-      
+    <div className="w-screen min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-500 flex flex-col items-center">
+
       {/* Navbar */}
       <div
-        className="w-full h-[70px] sm:h-[80px] flex items-center px-4 sm:px-8 gap-2 sm:gap-3 cursor-pointer"
+        className="w-full h-[70px] flex items-center px-6 gap-3 cursor-pointer"
         onClick={() => navigate("/")}
       >
-        <img src={Logo} alt="logo" className="w-[35px] sm:w-[45px]" />
-        <h1 className="text-white text-lg sm:text-2xl font-bold tracking-wide">
-          GverseShop
-        </h1>
+        <img src={Logo} alt="logo" className="w-[40px]" />
+        <h1 className="text-white text-xl font-bold">GverseShop</h1>
       </div>
 
       {/* Card */}
-      <div className="flex items-center justify-center flex-grow w-full px-3 sm:px-0">
-        <div className="w-[90%] sm:w-[420px] backdrop-blur-lg bg-white/20 border border-white/30 p-6 sm:p-10 rounded-2xl shadow-2xl flex flex-col items-center">
-          
-          <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-3">
+      <div className="flex items-center justify-center flex-grow w-full px-4">
+        <div className="w-full max-w-md backdrop-blur-lg bg-white/20 border border-white/30 p-8 rounded-2xl shadow-2xl">
+
+          <h2 className="text-3xl font-bold text-white text-center mb-4">
             Create Account
           </h2>
 
-          <span className="text-white text-center mb-6 text-sm">
-            Welcome to GverseShop, place your order
-          </span>
-
           {/* Google */}
-          <button className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 font-semibold py-2.5 sm:py-3 rounded-lg mb-5 hover:bg-gray-100 transition">
+          <button
+            className="w-full flex items-center justify-center gap-3 bg-white py-3 rounded-lg mb-5 hover:bg-gray-100"
+            onClick={handleGoogleSignup}
+          >
             <FcGoogle size={22} />
             Continue with Google
           </button>
 
           {/* Divider */}
-          <div className="flex items-center w-full mb-5">
+          <div className="flex items-center mb-5">
             <div className="flex-grow border-t border-white/40"></div>
             <span className="mx-3 text-white text-sm">OR</span>
             <div className="flex-grow border-t border-white/40"></div>
           </div>
 
           {/* Form */}
-          <form className="w-full" onSubmit={handleSignup}>
-            
-            {/* Name */}
+          <form onSubmit={handleSignup} className="space-y-4">
+
             <input
               type="text"
               placeholder="Full Name"
-              className="w-full mb-4 p-2.5 sm:p-3 rounded-lg bg-white/80 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="w-full p-3 rounded-lg bg-white/80"
               onChange={(e) => setName(e.target.value)}
               value={name}
             />
 
-            {/* Email */}
             <input
               type="email"
-              placeholder="Email Address"
-              className={`w-full mb-4 p-2.5 sm:p-3 rounded-lg bg-white/80 focus:outline-none focus:ring-2 ${
-                error.includes("User already") ? "border-2 border-red-500" : "focus:ring-purple-400"
-              }`}
+              placeholder="Email"
+              className="w-full p-3 rounded-lg bg-white/80"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
 
-            {/* Password */}
-            <div className="w-full relative mb-4">
+            <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full p-2.5 sm:p-3 rounded-lg bg-white/80 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full p-3 rounded-lg bg-white/80"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
               />
               <span
-                className="absolute right-3 top-2.5 sm:top-3 cursor-pointer text-gray-600 text-sm"
+                className="absolute right-3 top-3 cursor-pointer text-sm"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? "Hide" : "Show"}
               </span>
             </div>
 
-            {/* Confirm Password */}
             <input
               type="password"
               placeholder="Confirm Password"
-              className={`w-full mb-2 p-2.5 sm:p-3 rounded-lg bg-white/80 ${
-                error.includes("match") ? "border-2 border-red-500" : ""
-              }`}
+              className="w-full p-3 rounded-lg bg-white/80"
               onChange={(e) => setConfirmPassword(e.target.value)}
               value={confirmPassword}
             />
 
-            {/* Error Message */}
-            {error && (
-              <p className="text-red-300 text-sm mb-4">{error}</p>
-            )}
+            {error && <p className="text-red-300 text-sm">{error}</p>}
 
-            {/* Button */}
-            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg transition duration-300">
+            <button className="w-full bg-purple-600 text-white py-3 rounded-lg">
               Register
             </button>
 
-            {/* Redirect */}
-            <p className="text-white text-center mt-6 text-sm sm:text-base">
-              Already have an account?{" "}
+            <p className="text-white text-center text-sm">
+              Already have an account?
               <span
-                className="font-semibold cursor-pointer hover:underline"
+                className="ml-1 font-semibold cursor-pointer"
                 onClick={() => navigate("/login")}
               >
-                Signin
+                Login
               </span>
             </p>
+
           </form>
         </div>
       </div>

@@ -3,9 +3,6 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../config/token.js";
 
-
-
-
 export const register = async(req, res) => {
    try{
        const {name, email, password} = req.body;
@@ -83,6 +80,51 @@ export const logout = async(req, res) => {
         res.status(500).json({message:`Logout error ${error}`});
     }
 }
+
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    console.log("Google Data:", req.body);
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    let user = await User.findOne({ email });
+
+    //if user not exist → create
+    if (!user) {
+      user = await User.create({
+        name: name || "User",
+        email,
+        password: "google_auth",
+      });
+    }
+
+    // generate token
+    const token = await generateToken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      message: "Google login success",
+      user,
+    });
+
+  } catch (error) {
+    console.log("GoogleLogin error:", error); 
+    res.status(500).json({
+      message: "Google login failed",
+    });
+  }
+};
 
 
 
