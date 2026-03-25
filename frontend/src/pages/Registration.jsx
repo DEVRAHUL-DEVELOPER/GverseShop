@@ -8,32 +8,58 @@ import axios from "axios";
 function Registration() {
   const [showPassword, setShowPassword] = useState(false);
   const { serverUrl } = useContext(authDataContext);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    //Password match validation
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setError("");
+
     try {
       const result = await axios.post(
         `${serverUrl}/api/auth/register`,
-        {
-          name,
-          email,
-          password,
-        },
+        { name, email, password },
         { withCredentials: true }
       );
+
       console.log(result.data);
+
+      // Success
+      alert("Registration successful");
+      navigate("/login");
+
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.log(error);
+
+      //Handle "user already exists"
+      if (error.response) {
+        if (error.response.status === 409) {
+          setError("User already exists ");
+        } else {
+          setError(error.response.data?.message || "Something went wrong");
+        }
+      } else {
+        setError("Server not responding");
+      }
     }
   };
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-500 flex flex-col items-center">
+    <div className="w-screen min-h-screen bg-linear-to-br from-indigo-600 via-purple-600 to-blue-500 flex flex-col items-center">
       
       {/* Navbar */}
       <div
@@ -46,7 +72,7 @@ function Registration() {
         </h1>
       </div>
 
-      {/* Registration Card */}
+      {/* Card */}
       <div className="flex items-center justify-center flex-grow w-full px-3 sm:px-0">
         <div className="w-[90%] sm:w-[420px] backdrop-blur-lg bg-white/20 border border-white/30 p-6 sm:p-10 rounded-2xl shadow-2xl flex flex-col items-center">
           
@@ -58,7 +84,7 @@ function Registration() {
             Welcome to GverseShop, place your order
           </span>
 
-          {/* Google Signup */}
+          {/* Google */}
           <button className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 font-semibold py-2.5 sm:py-3 rounded-lg mb-5 hover:bg-gray-100 transition">
             <FcGoogle size={22} />
             Continue with Google
@@ -87,7 +113,9 @@ function Registration() {
             <input
               type="email"
               placeholder="Email Address"
-              className="w-full mb-4 p-2.5 sm:p-3 rounded-lg bg-white/80 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className={`w-full mb-4 p-2.5 sm:p-3 rounded-lg bg-white/80 focus:outline-none focus:ring-2 ${
+                error.includes("User already") ? "border-2 border-red-500" : "focus:ring-purple-400"
+              }`}
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
@@ -101,7 +129,6 @@ function Registration() {
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
               />
-
               <span
                 className="absolute right-3 top-2.5 sm:top-3 cursor-pointer text-gray-600 text-sm"
                 onClick={() => setShowPassword(!showPassword)}
@@ -114,15 +141,24 @@ function Registration() {
             <input
               type="password"
               placeholder="Confirm Password"
-              className="w-full mb-6 p-2.5 sm:p-3 rounded-lg bg-white/80 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className={`w-full mb-2 p-2.5 sm:p-3 rounded-lg bg-white/80 ${
+                error.includes("match") ? "border-2 border-red-500" : ""
+              }`}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
             />
 
-            {/* Register Button */}
+            {/* Error Message */}
+            {error && (
+              <p className="text-red-300 text-sm mb-4">{error}</p>
+            )}
+
+            {/* Button */}
             <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg transition duration-300">
               Register
             </button>
 
-            {/* Login Redirect */}
+            {/* Redirect */}
             <p className="text-white text-center mt-6 text-sm sm:text-base">
               Already have an account?{" "}
               <span
