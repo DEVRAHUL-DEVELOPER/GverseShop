@@ -1,6 +1,5 @@
 // src/pages/Customers.jsx
 import { useState } from 'react'
-import { Mail, Phone, MapPin, MoreVertical, Search } from 'lucide-react'
 
 export default function Customers() {
   const [customers] = useState([
@@ -12,57 +11,76 @@ export default function Customers() {
   ])
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Customers</h1>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">Customers</h1>
+        <div className="text-sm text-gray-500">
+          Manage your customer database
+        </div>
+      </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <p className="text-gray-600 text-sm">Total Customers</p>
-          <p className="text-2xl font-bold mt-2">3,892</p>
-          <p className="text-green-600 text-sm mt-2">↑ 15.3% from last month</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+          <p className="text-gray-600 text-sm font-medium">Total Customers</p>
+          <p className="text-3xl font-bold mt-2 text-gray-900">3,892</p>
+          <p className="text-green-600 text-sm mt-2 flex items-center gap-1">
+            <span>▲</span>
+            <span>15.3% from last month</span>
+          </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <p className="text-gray-600 text-sm">Active Customers</p>
-          <p className="text-2xl font-bold mt-2">3,245</p>
-          <p className="text-green-600 text-sm mt-2">↑ 8.7% from last month</p>
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+          <p className="text-gray-600 text-sm font-medium">Active Customers</p>
+          <p className="text-3xl font-bold mt-2 text-gray-900">3,245</p>
+          <p className="text-green-600 text-sm mt-2 flex items-center gap-1">
+            <span>▲</span>
+            <span>8.7% from last month</span>
+          </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <p className="text-gray-600 text-sm">New Customers (30d)</p>
-          <p className="text-2xl font-bold mt-2">456</p>
-          <p className="text-green-600 text-sm mt-2">↑ 23.1% from last month</p>
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+          <p className="text-gray-600 text-sm font-medium">New Customers (30d)</p>
+          <p className="text-3xl font-bold mt-2 text-gray-900">456</p>
+          <p className="text-green-600 text-sm mt-2 flex items-center gap-1">
+            <span>▲</span>
+            <span>23.1% from last month</span>
+          </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <p className="text-gray-600 text-sm">Avg. Order Value</p>
-          <p className="text-2xl font-bold mt-2">$89.99</p>
-          <p className="text-green-600 text-sm mt-2">↑ 5.2% from last month</p>
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+          <p className="text-gray-600 text-sm font-medium">Avg. Order Value</p>
+          <p className="text-3xl font-bold mt-2 text-gray-900">₹89.99</p>
+          <p className="text-green-600 text-sm mt-2 flex items-center gap-1">
+            <span>▲</span>
+            <span>5.2% from last month</span>
+          </p>
         </div>
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-        <div className="flex gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+      <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="md:col-span-2 relative">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</div>
             <input
               type="text"
               placeholder="Search customers by name or email..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
             />
           </div>
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors">
             <option>All Status</option>
             <option>Active</option>
             <option>Inactive</option>
           </select>
-          <button className="btn-primary">Search</button>
+          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+            Search
+          </button>
         </div>
       </div>
 
       {/* Customers Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {customers.map(customer => (
-          <div key={customer.id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+          <div key={customer.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6 border border-gray-100">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
@@ -71,44 +89,44 @@ export default function Customers() {
                   </span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800">{customer.name}</h3>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    customer.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
+                  <h3 className="font-semibold text-gray-900">{customer.name}</h3>
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                    customer.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                   }`}>
                     {customer.status}
                   </span>
                 </div>
               </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <MoreVertical size={18} />
+              <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                <span className="text-xl">⋯</span>
               </button>
             </div>
-            
-            <div className="space-y-2 mb-4">
+
+            <div className="space-y-3 mb-4">
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Mail size={16} />
+                <span>✉️</span>
                 <span>{customer.email}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Phone size={16} />
+                <span>📞</span>
                 <span>{customer.phone}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MapPin size={16} />
+                <span>📍</span>
                 <span>{customer.location}</span>
               </div>
             </div>
-            
-            <div className="border-t pt-4 flex justify-between">
+
+            <div className="border-t border-gray-100 pt-4 flex justify-between">
               <div>
-                <p className="text-xs text-gray-500">Total Orders</p>
-                <p className="font-semibold">{customer.orders}</p>
+                <p className="text-xs text-gray-500 font-medium">Total Orders</p>
+                <p className="font-bold text-gray-900">{customer.orders}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Total Spent</p>
-                <p className="font-semibold">${customer.spent}</p>
+                <p className="text-xs text-gray-500 font-medium">Total Spent</p>
+                <p className="font-bold text-green-600">₹{customer.spent}</p>
               </div>
-              <button className="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+              <button className="text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors">
                 View Details
               </button>
             </div>
@@ -117,13 +135,13 @@ export default function Customers() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center">
         <div className="flex gap-2">
-          <button className="px-3 py-1 border rounded-lg hover:bg-gray-50">Previous</button>
-          <button className="px-3 py-1 bg-indigo-600 text-white rounded-lg">1</button>
-          <button className="px-3 py-1 border rounded-lg hover:bg-gray-50">2</button>
-          <button className="px-3 py-1 border rounded-lg hover:bg-gray-50">3</button>
-          <button className="px-3 py-1 border rounded-lg hover:bg-gray-50">Next</button>
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Previous</button>
+          <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium">1</button>
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">2</button>
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">3</button>
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Next</button>
         </div>
       </div>
     </div>

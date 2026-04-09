@@ -6,6 +6,7 @@ import { authDataContext } from "../context/authContext.jsx";
 import axios from "axios";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../utils/Firebase.js";
+import Dashboard from "./Dashboard.jsx";
 
 function Registration() {
   const [showPassword, setShowPassword] = useState(false);
@@ -74,6 +75,8 @@ function Registration() {
       console.log(result.data);
 
       alert("Google signup successful");
+      navigate("/dashboard");
+      
     } catch (error) {
       console.error("Google signup error:", error);
       setError("Failed to signup with Google");
@@ -171,7 +174,7 @@ function Registration() {
                 className="ml-1 font-semibold cursor-pointer"
                 onClick={() => navigate("/login")}
               >
-                Login
+                Signin
               </span>
             </p>
 

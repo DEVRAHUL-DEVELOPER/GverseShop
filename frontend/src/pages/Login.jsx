@@ -79,8 +79,8 @@ function Login() {
 
       console.log(result.data);
 
-      alert("Google login successful ✅");
-      navigate("/");
+      alert("Google login successful");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Google login error:", error);
       setError("Failed to login with Google");
